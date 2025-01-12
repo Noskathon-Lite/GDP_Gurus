@@ -1,4 +1,4 @@
-Country,Year,GDP(current_USD),GDP_growth(annual%),GDP_per_capita(USD),"Foreign_Direct_Investment, net_inflows(%_of_GDP)",Trade(%ofGDP),POPULATION_TOTAL,Unemployment_Total(%_of_labor_force),Life_Expectancy_at_birth(years),Access_To_Electricity(%_of_population)
+Country,Year,GDP(current_USD),GDP_growth(annual%),GDP_per_capita(USD),"Foreign_Direct_Investment_net_inflows(%_of_GDP)",Trade(%ofGDP),POPULATION_TOTAL,Unemployment_Total(%_of_labor_force),Life_Expectancy_at_birth(years),Access_To_Electricity(%_of_population)
 Nepal,2000,5494252208,6.199999982,223.7118919,-0.008824253,55.710589,24559500,10.622,62.614,29.9
 Nepal,2001,6007055042,4.799892143,240.7051592,0.347091875,55.79992108,24956071,10.615,63.336,24.6
 Nepal,2002,6050875807,0.120143177,238.8612541,-0.098374869,46.2307185,25332178,10.655,63.264,36.4
