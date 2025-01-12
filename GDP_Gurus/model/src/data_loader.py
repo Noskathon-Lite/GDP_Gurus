@@ -2,13 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
-import joblib  # For saving the model to a .pkl file
+import joblib
 
-# ======= Load the dataset =======
 file_path = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/data/nepal.csv'
 data = pd.read_csv(file_path)
 
-# ======= Select relevant columns =======
 features = ['GDP_growth(annual%)', 'GDP_per_capita(USD)', 
             'Foreign_Direct_Investment_net_inflows(%_of_GDP)', 
             'Trade(%ofGDP)', 'POPULATION_TOTAL', 'GDP(current_USD)', 'Year']
