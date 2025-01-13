@@ -1,6 +1,6 @@
 // src/components/GDPBarChart.jsx
 import React from 'react';
-import { XAxis, YAxis, CartesianGrid, Tooltip,AreaChart, Area } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip,AreaChart, Area,ResponsiveContainer } from 'recharts';
 
 const Areachart = () => {
   const data = [
@@ -49,6 +49,7 @@ const Areachart = () => {
   ]
   return (
 <>
+<ResponsiveContainer>
 <AreaChart width={730} height={250} data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
@@ -68,6 +69,7 @@ const Areachart = () => {
           <Area type="monotone" dataKey="uv" stroke="#8884d8" fillOpacity={1} fill="url(#colorUv)" />
           <Area type="monotone" dataKey="pv" stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" />
         </AreaChart>
+        </ResponsiveContainer>
       
 </>
   );

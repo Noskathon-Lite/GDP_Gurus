@@ -4,14 +4,18 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 import joblib
 
-file_path = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/data/nepal.csv'
-data = pd.read_csv(file_path)
+file = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/data/nepal.csv'
+data = pd.read_csv(file)
 
-features = ['GDP_growth(annual%)', 'GDP_per_capita(USD)', 
+features = ['GDP_growth(annual%)', 
+            'GDP_per_capita(USD)', 
             'Foreign_Direct_Investment_net_inflows(%_of_GDP)', 
-            'Trade(%ofGDP)', 'POPULATION_TOTAL', 'GDP(current_USD)', 'Year']
+            'Trade(%ofGDP)', 
+            'POPULATION_TOTAL', 
+            'GDP(current_USD)', 
+            'Year']
 
-# Clean and prepare the data
+
 data_cleaned = data[features].dropna()  # Remove rows with missing values
 
 # Ensure 'Year' is recognized as a proper time index
@@ -19,7 +23,6 @@ data_cleaned['Year'] = pd.to_datetime(data_cleaned['Year'], format='%Y')  # Conv
 data_cleaned.set_index('Year', inplace=True)  # Set 'Year' as the index
 data_cleaned = data_cleaned.asfreq('YS')  # Ensure a yearly frequency for the index
 
-# ======= ARIMA Model =======
 # Use 'GDP(current_USD)' for ARIMA modeling
 gdp_series = data_cleaned['GDP(current_USD)']
 
@@ -35,7 +38,6 @@ model_filename = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/arima_gdp_model.
 joblib.dump(arima_model_fit, model_filename)  # Save the model as a .pkl file
 print(f"\nARIMA model saved to {model_filename}")
 
-# ======= Forecast from 2023 to 2030 =======
 # Forecast for the years 2023 to 2030
 forecast_years = pd.date_range(start='2023', end='2030', freq='YS')  # Correct frequency for yearly steps
 forecast_log = arima_model_fit.forecast(steps=len(forecast_years))
