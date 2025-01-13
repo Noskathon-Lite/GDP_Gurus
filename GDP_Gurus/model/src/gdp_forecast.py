@@ -1,32 +1,46 @@
-import joblib
+import sys
 import pandas as pd
-import matplotlib.pyplot as plt
+import joblib
 import numpy as np
-from datetime import datetime
+import matplotlib.pyplot as plt
 
-def load_model():
-    model = joblib.load('../model/arima_gdp_model.pkl') 
-    return model
+year = int(sys.argv[1])
+country = sys.argv[2] 
 
-def forecast_gdp(current_gdp, forecast_year, model):
-    current_year = datetime.now().year
-    years_ahead = forecast_year - current_year
+data_path = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/data/nepal.csv'
+data = pd.read_csv(data_path)
 
-    forecast_index = pd.date_range(start=str(current_year), periods=years_ahead + 1, freq='A')
+# Preprocess the data
+features = ['GDP_growth(annual%)', 
+            'GDP_per_capita(USD)', 
+            'Foreign_Direct_Investment_net_inflows(%_of_GDP)', 
+            'Trade(%ofGDP)', 
+            'POPULATION_TOTAL', 
+            'GDP(current_USD)', 
+            'Year']
 
-    forecast = model.predict(start=len(current_gdp), end=len(current_gdp) + years_ahead - 1, dynamic=False)
+data_cleaned = data[features].dropna()
+data_cleaned['Year'] = pd.to_datetime(data_cleaned['Year'], format='%Y')
+data_cleaned.set_index('Year', inplace=True)
+data_cleaned = data_cleaned.asfreq('YS') 
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(np.arange(current_year, current_year + len(current_gdp)), current_gdp, label="Historical GDP")
-    plt.plot(forecast_index, forecast, label="Forecasted GDP", color='red')
-    plt.xlabel('Year')
-    plt.ylabel('GDP')
-    plt.title('GDP Forecast')
-    plt.legend()
+gdp_series = data_cleaned['GDP(current_USD)']
 
-    plot_filename = '../backend/forecast_image/gdp_forecast.png'
-    plt.savefig(plot_filename)
-    plt.close()
+model_path = '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/arima_gdp_model.pkl'
+model = joblib.load(model_path)
 
-    forecast_values = forecast.tolist()
-    return forecast_values, plot_filename
+gdp_log_forecast = model.forecast(steps=1) 
+gdp_forecast = np.exp(gdp_log_forecast)
+
+print(f"Forecasted GDP for {country} in {year}: ${gdp_forecast[0]:,.2f}")
+
+plt.figure(figsize=(10, 6))
+plt.plot(gdp_series.index, gdp_series, 'o-', color='blue', label='Actual GDP', alpha=0.8)
+plt.plot([data_cleaned.index[-1], pd.to_datetime(str(year))], 
+         [gdp_series[-1], gdp_forecast[0]], '--', label=f'Forecast for {year}', color='red', linewidth=2)
+plt.xlabel('Year')
+plt.ylabel('GDP (current USD)')
+plt.title(f'GDP Forecast for {year}')
+plt.legend()
+plt.savefig('/Users/void/Desktop/GDP_ Guru/GDP_Gurus/backend/forecast_image/forecast_{year}.png')
+plt.show()
