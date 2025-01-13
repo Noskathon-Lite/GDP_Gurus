@@ -3,10 +3,13 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 const app = express();
+
+// Middleware to parse JSON bodies
 app.use(express.json());
 
+// POST route to handle GDP forecast requests
 app.post('/forecast', (req, res) => {
-    const { year, currentGDP } = req.body;
+    const { year, currentGDP } = req.body; // Get year and GDP from the request body
 
     if (!year || !currentGDP) {
         return res.status(400).json({
@@ -16,10 +19,11 @@ app.post('/forecast', (req, res) => {
     }
 
     const pythonProcess = spawn('python', [
-        path.join(__dirname, '../model/src/gdp_forecast.py'), 
+        path.join(__dirname, '/Users/void/Desktop/GDP_ Guru/GDP_Gurus/model/src/gdp_forecast.py'), 
         year,
         currentGDP
     ]);
+
     pythonProcess.stdout.on('data', (data) => {
         const result = data.toString();
         const [forecastedGDP, plotPath] = result.split('\n');

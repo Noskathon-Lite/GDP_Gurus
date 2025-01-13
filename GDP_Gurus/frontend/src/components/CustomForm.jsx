@@ -5,11 +5,13 @@ import axios from 'axios';
 
 const MyForm = () => {
   const [inputValue, setInputValue] = useState('');
+  const [currentGDP, setCurrentGDP] = useState('');
   const [responseData, setResponseData] = useState({
-    predictedGDP: 'N/A',
+    forecastedGDP: 'N/A',
     year: 'N/A',
     errorMargin: 'N/A',
     confidenceLevel: 'N/A',
+    graphPath: 'N/A',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,31 +20,41 @@ const MyForm = () => {
     setInputValue(e.target.value);
   };
 
+  const handleGDPChange = (e) => {
+    setCurrentGDP(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      // Replace the URL with your backend endpoint
-      const response = await axios.post('https://your-backend-api.com/predict', { year: inputValue });
-      if (response.data) {
-        setResponseData(response.data);  // Update with actual data from API
+      // Send a POST request to the backend with year and current GDP
+      const response = await axios.post('http://localhost:3000/forecast', {
+        year: inputValue,
+        currentGDP: currentGDP,
+      });
+
+      if (response.data.success) {
+        setResponseData({
+          forecastedGDP: response.data.forecastedGDP,
+          year: inputValue,
+          graphPath: response.data.graphPath,
+        });
       } else {
         setResponseData({
-          predictedGDP: 'No data available',
+          forecastedGDP: 'No data available',
           year: inputValue,
-          errorMargin: 'Unknown',
-          confidenceLevel: 'Unknown',
+          graphPath: 'N/A',
         });
       }
     } catch (err) {
       setError('Failed to fetch data from backend');
       setResponseData({
-        predictedGDP: 'Error',
+        forecastedGDP: 'Error',
         year: inputValue,
-        errorMargin: 'Error',
-        confidenceLevel: 'Error',
+        graphPath: 'Error',
       });
     } finally {
       setLoading(false);
@@ -55,7 +67,7 @@ const MyForm = () => {
         Predict the future GDP
       </h4>
 
-      {!responseData ? (
+      {!responseData.forecastedGDP ? (
         <form
           onSubmit={handleSubmit}
           className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4 w-full h-60 max-w-sm border-white"
@@ -71,6 +83,17 @@ const MyForm = () => {
             />
           </div>
 
+          <div>
+            <Input
+              type="text"
+              id="gdp"
+              value={currentGDP}
+              onChange={handleGDPChange}
+              className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-lg placeholder:text-gray-400"
+              placeholder="Enter the current GDP"
+            />
+          </div>
+
           <Button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -82,33 +105,27 @@ const MyForm = () => {
           {error && <p className="text-center text-red-500 mt-4">{error}</p>}
         </form>
       ) : (
-        // Render a new form with parameters from the backend response or default values
-        <form className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4 w-full max-w-sm border-white">
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4 w-full max-w-sm border-white">
           <h5 className="text-xl text-white mb-4">Received Data</h5>
 
-          {Object.entries(responseData).map(([key, value]) => (
-            <div key={key}>
-              <label htmlFor={key} className="block text-sm font-medium text-gray-300 capitalize">
-                {key.replace(/([A-Z])/g, ' $1')} {/* Capitalize the keys */}
-              </label>
-              <Input
-                type="text"
-                id={key}
-                value={value}
-                className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                readOnly
-              />
-            </div>
-          ))}
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Forecasted GDP</label>
+            <p className="text-white">{responseData.forecastedGDP}</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Graph</label>
+            <img src={`http://localhost:3000/forecast_image/${responseData.graphPath}`} alt="Forecast Graph" />
+          </div>
 
           <Button
             type="button"
             className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            onClick={() => setResponseData(null)} // Reset form when "Go Back" is clicked
+            onClick={() => setResponseData({})} // Reset the form
           >
             Go Back
           </Button>
-        </form>
+        </div>
       )}
     </>
   );
