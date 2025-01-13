@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Areachart from "./components/ui/AreaChart";
 import Barchart from "./components/ui/Barchart";
 import CustomCard from "./components/CustomCard";
+import MyForm from "./components/CustomForm";
 
 function App() {
   const [gdpInput, setGdpInput] = useState("");
@@ -193,15 +192,11 @@ function App() {
         </div>
 
         <div className="bg-gray-800 rounded-lg p-6 w-full shadow-lg">
-          <h4
-            className="text-3xl font-semibold tracking-tight text-center text-green-700 mb-6 mt-12 px-4 py-2"
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          >
-            Predict the future GDP?
-          </h4>
-
+        
+          <div className="max-w-md mx-auto mt-10">
+          <MyForm/>
+          </div>
+          
 
 
         
