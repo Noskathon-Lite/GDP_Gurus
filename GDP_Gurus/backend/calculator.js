@@ -7,14 +7,14 @@ app.post('/calculate', (req, res) => {
     try {
         const {
             year,
-            gdpPerCapita, // GDP per capita (optional for calculation)
-            populationTotal, // Population total
-            gdp, // GDP (optional for calculation)
+            gdpPerCapita, //opt
+            populationTotal, 
+            gdp, //opt
         } = req.body;
 
         if (!year || (!gdpPerCapita && !gdp)) {
             return res.status(400).json({
-                status: 'error',
+                success: false,
                 message: 'Year and either GDP or GDP per capita with population are required.',
             });
         }
@@ -53,7 +53,7 @@ app.post('/calculate', (req, res) => {
     } catch (error) {
         console.error('Error processing calculation:', error);
         res.status(500).json({
-            status: 'error',
+            success: false,
             message: 'Internal server error',
         });
     }
