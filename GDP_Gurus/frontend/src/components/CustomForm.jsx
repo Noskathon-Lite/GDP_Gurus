@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Input } from './ui/input';  // Custom Input component path
+import { Button } from './ui/button';  // Custom Button component path
 import axios from 'axios';
 
 const MyForm = () => {
   const [inputValue, setInputValue] = useState('');
-  const [currentGDP, setCurrentGDP] = useState('');
   const [responseData, setResponseData] = useState({
     forecastedGDP: 'N/A',
     year: 'N/A',
-    errorMargin: 'N/A',
-    confidenceLevel: 'N/A',
     graphPath: 'N/A',
   });
   const [loading, setLoading] = useState(false);
@@ -20,20 +17,14 @@ const MyForm = () => {
     setInputValue(e.target.value);
   };
 
-  const handleGDPChange = (e) => {
-    setCurrentGDP(e.target.value);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      // Send a POST request to the backend with year and current GDP
       const response = await axios.post('http://localhost:3000/forecast', {
         year: inputValue,
-        currentGDP: currentGDP,
       });
 
       if (response.data.success) {
@@ -83,17 +74,6 @@ const MyForm = () => {
             />
           </div>
 
-          <div>
-            <Input
-              type="text"
-              id="gdp"
-              value={currentGDP}
-              onChange={handleGDPChange}
-              className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-lg placeholder:text-gray-400"
-              placeholder="Enter the current GDP"
-            />
-          </div>
-
           <Button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -121,7 +101,10 @@ const MyForm = () => {
           <Button
             type="button"
             className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            onClick={() => setResponseData({})} // Reset the form
+            onClick={() => {
+              setResponseData({});
+              setInputValue('');  // Clear the input field as well
+            }}
           >
             Go Back
           </Button>
